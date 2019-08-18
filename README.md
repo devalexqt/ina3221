@@ -1,9 +1,9 @@
 # ina3221
 Current and voltage sensor INA3221 for Espruino + ESP32
 
-#example
+# example
 
-```
+```js
 //setup communication bus
 I2C1.setup({scl:D22,sda:D21});
 
