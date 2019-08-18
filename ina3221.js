@@ -146,7 +146,7 @@ var INA3221_CONFIG_MODE_0 = 0x0001;
     if (i<0) throw new Error("average must be 1,4,16,64,128,256,512 or 1024");
     //config |= i<<9;
   }
-    console.log("====>config:",config);
+    //console.log("====>config:",config);
   this.wr(0x00, config);
   // calibration reg
   var cal = Math.round(0.00512 / (this.currentLSB * this.shunt));
