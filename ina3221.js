@@ -1,33 +1,8 @@
 //http://www.ti.com/lit/ds/symlink/ina3221.pdf
 
-I2C1.setup({scl:D22,sda:D21});
-//var i2c = new I2C1();
-//i2c.setup({scl:D5, sda:D4});
-
-//// Current and voltage sensor
-var INA226 = require("INA226");
-
-
-//setTimeout(()=>{
- console.log("find:",I2C.find(D21));
-//},5000);
-//var ina = new INA226(I2C1, { 
-//  average:1024,
-//  shunt:0.1, 
-//  maxCurrent: 10,
-//});
-
-//setInterval(()=>{
-//  console.log("==>INA226",ina.read());
-//},5000);
-
-//var r=I2C1.readFrom(0x40,2);
-//console.log("=>readed bytes:",r);
-
-
+//// Current and voltage sensor INA3221
 function INA3221(i2c, options) {
-  //add
-  var INA3221_REG_CONFIG   = 0x00;
+ var INA3221_REG_CONFIG   = 0x00;
 
 /** @constant
  *  @type {number}
@@ -144,7 +119,6 @@ var INA3221_CONFIG_MODE_0 = 0x0001;
  *  @type {number}
  *  @default 0x01
  */
-  
   this.i2c = i2c;
   options = options||{};
   this.addr = options.addr||0x40; // default address if A0/A1 are GND
@@ -210,7 +184,6 @@ INA3221.prototype.read = function(channel) {
   var voltage=this.readShuntVoltage_V(channel);
   var voltage_shunt=this.readShuntVoltage_mV(channel);
   var current=voltage_shunt/0.1/1000;
-  //console.log("==>reading shunt voltage:",this.readShuntVoltage(channel));
   return {
     vshunt : voltage_shunt,//this.rds(0x01)*0.000025, // volts
     vbus : voltage,//this.rd(0x02+(channel -1) *2)*0.00125,//this.rd(0x02)*0.00125, // volts
@@ -218,9 +191,7 @@ INA3221.prototype.read = function(channel) {
     current :current,//this.rds(0x04+(channel -1) *2)*this.currentLSB, // amps
     //overflow : (flags&4)!=0
   };
-};
-
-///my added
+};//INA3221
 INA3221.prototype.readShuntVoltage_mV=function(channel){
   //console.log("readShuntVoltage_mV....");
   var raw=this.rd(0x01+(channel -1) *2);
@@ -237,64 +208,7 @@ INA3221.prototype.readShuntVoltage_V=function(channel){
     //console.log("readShuntVoltage changed raw:",raw);
   return raw * 0.001;
 };
-
-///////////// my code
-var ina = new INA3221(I2C1, { 
-  average:1024,
-  shunt:0.1, 
-  maxCurrent: 10,
-});
-
-var counter=0;
-
-var interval=setInterval(()=>{
-  var data={
-      ch1:ina.read(1),
-      ch2:ina.read(2),
-      ch3:ina.read(3),
-      };
-  console.log("==>voltage:",data);
-  drawVoltageStats(data);
-  counter++;
-  if(counter>100){clearInterval(interval);};
-},3000);
-
-//console.log("==>convert colors: ",E.HSBtoRGB(0, 0, 1,true));
-require("neopixel").write(D27, [
-  E.HSBtoRGB(0, 0, 0.1,true),
-  E.HSBtoRGB(0.1, 0, 0.1,true),
-  E.HSBtoRGB(0.2, 0, 0.1,true),
-  E.HSBtoRGB(0.3, 0, 0.1,true),
-  E.HSBtoRGB(0.4, 0, 0.1,true),
-  E.HSBtoRGB(0.5, 0, 0.1,true),
-  E.HSBtoRGB(0.6, 0, 0.1,true),
-  E.HSBtoRGB(0.7, 0, 0.1,true),
-  E.HSBtoRGB(0.8, 0, 0.1,true),
-  E.HSBtoRGB(0.6, 0, 0.1,true),
-  E.HSBtoRGB(0.7, 0, 0.1,true),
-  E.HSBtoRGB(0.8, 0, 0.1,true),
-]);
-
-var display_ready=false;
-var display=require("SSD1306").connect(I2C1, ()=>{display_ready=true;},{width:128, height : 64,contrast : 100 });
-require("Font8x12").add(Graphics);
-display.setFont8x12();
-
-function drawVoltageStats(data){
-  if(!display_ready){console.log("=>display_ready",display_ready);return;}
-  display.clear();
-  //display.setFontVector(8);
-  //display.drawString(`vshunt, vbus (mv), power (W), current (A)`,0,0);
-  drawChannelStats(data,"ch1",0);
-  drawChannelStats(data,"ch2",15);
-  drawChannelStats(data,"ch3",30);
-  display.flip();
-}//drawLedStatus
-
-function drawChannelStats(data,channel,offset){
-  //display.setFontVector(9);
-  display.drawString(`${data[channel].vbus.toFixed(2)}V, ${data[channel].current.toFixed(3)}A, ${data[channel].power.toFixed(3)}W`,0,offset);
-};//drawChannelStats
+module.exports=INA3221
 
 
 
