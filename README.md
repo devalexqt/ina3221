@@ -1,6 +1,9 @@
 # ina3221
 Current and voltage sensor INA3221 for Espruino + ESP32
 
+# Modify board for 3 independent channels [optional]
+  (see images folder)
+  
 # example
 
 ```js
@@ -8,6 +11,7 @@ Current and voltage sensor INA3221 for Espruino + ESP32
 I2C1.setup({scl:D22,sda:D21});
 
 //create sensor
+var INA3221=require("https://raw.githubusercontent.com/devalexqt/ina3221/master/ina3221.js");
 var ina = new INA3221(I2C1, { 
       average:1024,
       shunt:0.1, 
