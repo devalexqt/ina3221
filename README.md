@@ -1,10 +1,10 @@
-# ina3221
+# INA3221
 Current and voltage sensor INA3221 for Espruino + ESP32
 
 # Modify board for 3 independent channels [optional]
   (see images folder)
   
-# example
+# Example
 
 ```js
 //setup communication bus
