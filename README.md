@@ -22,7 +22,7 @@ var ina = new INA3221(I2C1, {
   var data={
     ch1:ina.read(1),//channel 1
     ch2:ina.read(2), // channel 2
-    ch3:ina.read(3), //chanel 3
+    ch3:ina.read(3), //channel 3
   }; 
   console.log("==>ina:",data);    
 
